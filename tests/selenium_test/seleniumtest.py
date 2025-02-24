@@ -24,14 +24,16 @@ login_email.send_keys("pramudiptha.l@gmail.com")
 login_pass.send_keys("rmc")
 login_btn.click()
 
-driver.get("https://rmcix.adhimix.web.id/web?#min=1&limit=80&view_type=list&model=survey.harian&menu_id=351")
+driver.get("https://rmcix.adhimix.web.id/web?#id=772402&view_type=form&model=survey.harian&menu_id=351")
 time.sleep(3)
+driver.find_element(By.XPATH, "/html/body/div[1]/div/div[2]/div/div/div/table/tbody/tr[1]/td[2]").click()
 print("Page Title: ", driver.title)
 
-create_btn = driver.find_element(By.XPATH, "/html/body/div[1]/div/div[1]/div[2]/div[1]/div/button[1]")
-create_btn.click()
+a = driver.find_element(By.XPATH, "/html/body/div[1]/div/div[1]/ol/li[2]").text
+b = driver.find_element(By.XPATH, "/html/body/div[1]/div/div[2]/div/div/div/div/h1/span").text 
 
-print("Page Title: ", driver.title)
+print("No.Survey: ", a)
+print("No.Survey: ", b)
 
 # def create_task_flow():
 
