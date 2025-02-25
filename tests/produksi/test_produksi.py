@@ -11,6 +11,8 @@ from selenium.webdriver.support.select import Select
 class TestProduksi:
     site = "RMC"
     no_survey = ""
+    nama_proyek = ""
+    volume_rencana = 0
 
     @pytest.mark.order1
     def test_create_survey(self, driver : WebDriver):
@@ -40,6 +42,7 @@ class TestProduksi:
             .send_keys(Keys.ENTER)\
             .perform()
         assert "PROYEK IKN3" in field_nama_proyek.get_attribute("value")
+        self.nama_proyek = field_nama_proyek.get_attribute("value")
 
         # Value Field SPP dapat disesuaikan
         ActionChains(driver)\
@@ -65,7 +68,7 @@ class TestProduksi:
                                                           /table/tbody/tr/td/div/div[2]/div/table/tbody/tr[1]/td[1]")
         sales_order_line.click()
 
-        time.sleep(2)
+        time.sleep(5)
 
         field_struktur = driver.find_element(By.XPATH, "/html/body/div[9]/div/div/div[2]/div/div/div/div[1]\
                                                         /table[2]/tbody/tr[2]/td[2]/div/div/input")
@@ -81,21 +84,28 @@ class TestProduksi:
             .pause(1)\
             .send_keys(Keys.ENTER)\
             .perform()
+        assert "Balok" in field_struktur.get_attribute("value")
+
         field_vol_rencana.clear()
         field_vol_rencana.send_keys("5")
+        assert field_vol_rencana.get_attribute("value") == "5"
+        self.volume_rencana = int(field_vol_rencana.get_attribute("value"))
+
         ActionChains(driver)\
             .click(field_metode_cor)\
             .send_keys_to_element(field_metode_cor, "CP")\
             .pause(1)\
             .send_keys(Keys.ENTER)\
             .perform()
+        assert "CP" in field_metode_cor.get_attribute("value")
+
         save_close_btn.click()
         ActionBuilder(driver).clear_actions()
 
         save_btn = driver.find_element(By.XPATH, "/html/body/div[1]/div/div[1]/div[2]/div[1]/div/div[2]/button[1]")
         save_btn.click()
 
-        time.sleep(2)
+        time.sleep(5)
 
         no_survey_text = driver.find_element(By.XPATH, "/html/body/div[1]/div/div[2]/div/div/div/div/h1/span").text
         TestProduksi.no_survey = no_survey_text
@@ -127,7 +137,7 @@ class TestProduksi:
 
     @pytest.mark.order2
     def test_create_rph(self, driver : WebDriver):
-        driver.get("https://rmcix.adhimix.web.id/web?#min=1&limit=80&view_type=list&model=survey.harian&menu_id=351")
+        driver.get("https://rmcix.adhimix.web.id/web?#min=1&limit=80&view_type=list&model=rencana.produksi.harian&menu_id=352")
         time.sleep(3)
 
         print("Title Page: ", driver.title)
@@ -137,7 +147,7 @@ class TestProduksi:
         assert create_btn.is_enabled() == True
         create_btn.click()
         
-        time.sleep(10)
+        time.sleep(20)
 
         list_material_btn = driver.find_element(By.XPATH, "/html/body/div[1]/div/div[2]/div/div/div/div\
                                                            /table[1]/tbody/tr/td/div/ul/li[2]/a")
@@ -147,7 +157,7 @@ class TestProduksi:
                                                              /tr/td/div/div/div[2]/table[1]/tbody/tr/td[1]/button")
         hitung_material_btn.click()
 
-        time.sleep(2)
+        time.sleep(10)
 
         confirm_btn = driver.find_element(By.XPATH, "/html/body/div[1]/div/div[2]/div/div/header/button[1]")
         confirm_btn.click()
@@ -160,5 +170,22 @@ class TestProduksi:
         generate_docket_btn = driver.find_element(By.XPATH, "/html/body/div[1]/div/div[2]/div/div/header/button[4]")
         generate_docket_btn.click()
         time.sleep(2)
+
+        ok_btn = driver.find_element(By.XPATH, "/html/body/div[6]/div/div/div[3]/button[1]")
+        ok_btn.click()
+        time.sleep(2)
+
+    @pytest.mark.order3
+    def test_request_batch(self, driver):
+        driver.get("https://rmcix.adhimix.web.id/web?#min=1&limit=80&view_type=list&model=schedule.truck.mixer&menu_id=352")
+        time.sleep(3)
+
+        filter_btn = driver.find_element(By.XPATH, "/html/body/div[1]/div/div[1]/div[3]/div[1]/div[1]/button")
+        filter_btn.click()
+
+        filter_docket_hari_ini = driver.find_element(By.XPATH, "/html/body/div[1]/div/div[1]/div[3]/div[1]/div[1]/ul/li[1]/a")
+        filter_docket_hari_ini.click()
+
+        time.sleep(3)
 
         
