@@ -1,3 +1,4 @@
+import time
 import pytest
 from credential import CREDENTIAL
 from selenium import webdriver
@@ -12,6 +13,7 @@ def chrome_driver():
     service = Service(ChromeDriverManager().install())
     options = webdriver.ChromeOptions()
     options.add_argument("--disable-gpu")
+    options.add_argument("--mute-audio")
 
     driver = webdriver.Chrome(service=service, options=options)
     driver.implicitly_wait(5)
@@ -32,4 +34,6 @@ def driver(request, chrome_driver):
     chrome_driver.find_element(By.ID, "password").send_keys(credentials["password"])
     chrome_driver.find_element(By.XPATH, "/html/body/div/div[2]/form/div[3]/button").click()
 
-    yield chrome_driver  # Provide logged-in driver to tests
+    yield chrome_driver # Provide logged-in driver to tests
+    
+    time.sleep(5)  
