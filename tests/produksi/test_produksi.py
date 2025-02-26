@@ -17,7 +17,7 @@ class TestProduksi:
     @pytest.mark.order1
     def test_create_survey(self, driver : WebDriver):
         driver.get("https://rmcix.adhimix.web.id/web?#min=1&limit=80&view_type=list&model=survey.harian&menu_id=351")
-        time.sleep(3)
+        time.sleep(5)
 
         print("Title Page: ", driver.title)
         assert driver.title == "Survey Harian - Odoo"
@@ -68,7 +68,7 @@ class TestProduksi:
                                                           /table/tbody/tr/td/div/div[2]/div/table/tbody/tr[1]/td[1]")
         sales_order_line.click()
 
-        time.sleep(5)
+        time.sleep(3)
 
         field_struktur = driver.find_element(By.XPATH, "/html/body/div[9]/div/div/div[2]/div/div/div/div[1]\
                                                         /table[2]/tbody/tr[2]/td[2]/div/div/input")
@@ -78,6 +78,7 @@ class TestProduksi:
                                                           /table[2]/tbody/tr[5]/td[2]/div/div/input")
         save_close_btn = driver.find_element(By.XPATH, "/html/body/div[9]/div/div/div[3]/button[1]")
 
+        # Value Field Struktur dapat disesuaikan
         ActionChains(driver)\
             .click(field_struktur)\
             .send_keys_to_element(field_struktur, "Balok")\
@@ -86,11 +87,13 @@ class TestProduksi:
             .perform()
         assert "Balok" in field_struktur.get_attribute("value")
 
+        # Value Field Volume Rencana dapat disesuaikan
         field_vol_rencana.clear()
-        field_vol_rencana.send_keys("5")
-        assert field_vol_rencana.get_attribute("value") == "5"
+        field_vol_rencana.send_keys("10")
+        assert field_vol_rencana.get_attribute("value") == "10"
         self.volume_rencana = int(field_vol_rencana.get_attribute("value"))
 
+        #  Value Field Metode Cor dapat disesuaikan
         ActionChains(driver)\
             .click(field_metode_cor)\
             .send_keys_to_element(field_metode_cor, "CP")\
@@ -133,7 +136,7 @@ class TestProduksi:
         ok_btn = driver.find_element(By.XPATH, "/html/body/div[6]/div/div/div[3]/button[1]")
         ok_btn.click()
 
-        # time.sleep(5)
+        time.sleep(5)
 
     @pytest.mark.order2
     def test_create_rph(self, driver : WebDriver):
@@ -157,7 +160,7 @@ class TestProduksi:
                                                              /tr/td/div/div/div[2]/table[1]/tbody/tr/td[1]/button")
         hitung_material_btn.click()
 
-        time.sleep(10)
+        time.sleep(20)
 
         confirm_btn = driver.find_element(By.XPATH, "/html/body/div[1]/div/div[2]/div/div/header/button[1]")
         confirm_btn.click()
@@ -177,15 +180,70 @@ class TestProduksi:
 
     @pytest.mark.order3
     def test_request_batch(self, driver):
-        driver.get("https://rmcix.adhimix.web.id/web?#min=1&limit=80&view_type=list&model=schedule.truck.mixer&menu_id=352")
+        driver.get("https://rmcix.adhimix.web.id/web?#min=1&limit=80&view_type=list&model=schedule.truck.mixer&menu_id=3832")
         time.sleep(3)
 
-        filter_btn = driver.find_element(By.XPATH, "/html/body/div[1]/div/div[1]/div[3]/div[1]/div[1]/button")
+        driver.find_element(By.XPATH, "/html/body/div[1]/div/div[1]/div[1]/div/span").click()
+        filter_btn = driver.find_element(By.XPATH, "/html/body/div[1]/div/div[1]/div[3]/div[1]/div[1]")
         filter_btn.click()
 
         filter_docket_hari_ini = driver.find_element(By.XPATH, "/html/body/div[1]/div/div[1]/div[3]/div[1]/div[1]/ul/li[1]/a")
         filter_docket_hari_ini.click()
+        filter_btn.click()
 
         time.sleep(3)
+
+        list_docket = driver.find_elements(By.XPATH, "/html/body/div[1]/div/div[2]/div/div/div/table/tbody/tr")
+
+        volume_docket = 0
+        for docket in list_docket:
+            col = docket.find_elements(By.TAG_NAME, "td")
+
+            nama_proyek_docket = col[6].text
+            state = col[-4].text
+
+            # if nama_proyek_docket == self.nama_proyek:
+            if nama_proyek_docket == "PROYEK IKN3 (241488)" and state == "Draft":
+                volume_docket = int(float(col[-7].text))
+
+                request_batch_btn = col[-2].find_element(By.TAG_NAME, "button")
+                request_batch_btn.click()
+                time.sleep(5)
+                break
+
+        field_driver = driver.find_element(
+                By.XPATH, "/html/body/div[9]/div/div/div[2]/div/div/div/table[2]/tbody/tr[2]/td[2]/div/div/input"
+            )
+        field_batching_plant = driver.find_element(
+                By.XPATH, "/html/body/div[9]/div/div/div[2]/div/div/div/table[2]/tbody/tr[3]/td[2]/div/div/input"
+            )
+        field_volume_batch = driver.find_element(
+                By.XPATH, "/html/body/div[9]/div/div/div[2]/div/div/div/table[2]/tbody/tr[4]/td[2]/input"
+            )
+        confirm_request_batch_btn = driver.find_element(
+                By.XPATH, "/html/body/div[9]/div/div/div[3]/div/footer/button[1]"
+            )
+        
+        ActionChains(driver)\
+            .click(field_driver)\
+            .pause(1)\
+            .send_keys(Keys.ENTER)\
+            .perform()
+        ActionChains(driver)\
+            .click(field_batching_plant)\
+            .pause(1)\
+            .send_keys(Keys.ENTER)\
+            .perform()
+        
+        field_volume_batch.clear()
+        field_volume_batch.send_keys(volume_docket)
+        assert field_volume_batch.get_attribute("value") == str(volume_docket)
+
+        confirm_request_batch_btn.click()
+        ActionBuilder(driver).clear_actions()
+
+        time.sleep(3)
+
+        
 
         

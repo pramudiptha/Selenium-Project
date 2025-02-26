@@ -34,6 +34,6 @@ def driver(request, chrome_driver):
     chrome_driver.find_element(By.ID, "password").send_keys(credentials["password"])
     chrome_driver.find_element(By.XPATH, "/html/body/div/div[2]/form/div[3]/button").click()
 
+    time.sleep(4)  # Wait for login to complete
+
     yield chrome_driver # Provide logged-in driver to tests
-    
-    time.sleep(5)  
