@@ -6,6 +6,8 @@ from selenium.webdriver.chrome.webdriver import WebDriver
 from selenium.webdriver.common.actions.action_builder import ActionBuilder
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.select import Select
+from selenium.common.exceptions import NoAlertPresentException, NoSuchElementException
+from selenium.webdriver.common.alert import Alert
 
 @pytest.mark.usefixtures("driver")
 class TestProduksi:
@@ -38,7 +40,7 @@ class TestProduksi:
         # Value Field Nama Proyek dapat disesuaikan
         ActionChains(driver)\
             .send_keys_to_element(field_nama_proyek, "PROYEK IKN3")\
-            .pause(1)\
+            .pause(0.7)\
             .send_keys(Keys.ENTER)\
             .perform()
         assert "PROYEK IKN3" in field_nama_proyek.get_attribute("value")
@@ -48,7 +50,7 @@ class TestProduksi:
         ActionChains(driver)\
             .click(field_no_spp)\
             .send_keys_to_element(field_no_spp, "SPP")\
-            .pause(1)\
+            .pause(0.7)\
             .send_keys(Keys.ENTER)\
             .perform()
         assert "SPP" in field_no_spp.get_attribute("value")
@@ -57,7 +59,7 @@ class TestProduksi:
         ActionChains(driver)\
             .click(field_teknisi)\
             .send_keys_to_element(field_teknisi, "Arif")\
-            .pause(1)\
+            .pause(0.7)\
             .send_keys(Keys.ENTER)\
             .perform()
         assert "Arif" in field_teknisi.get_attribute("value")
@@ -82,7 +84,7 @@ class TestProduksi:
         ActionChains(driver)\
             .click(field_struktur)\
             .send_keys_to_element(field_struktur, "Balok")\
-            .pause(1)\
+            .pause(0.7)\
             .send_keys(Keys.ENTER)\
             .perform()
         assert "Balok" in field_struktur.get_attribute("value")
@@ -97,7 +99,7 @@ class TestProduksi:
         ActionChains(driver)\
             .click(field_metode_cor)\
             .send_keys_to_element(field_metode_cor, "CP")\
-            .pause(1)\
+            .pause(0.7)\
             .send_keys(Keys.ENTER)\
             .perform()
         assert "CP" in field_metode_cor.get_attribute("value")
@@ -108,9 +110,11 @@ class TestProduksi:
         save_btn = driver.find_element(By.XPATH, "/html/body/div[1]/div/div[1]/div[2]/div[1]/div/div[2]/button[1]")
         save_btn.click()
 
-        time.sleep(5)
+        time.sleep(2)
 
         no_survey_text = driver.find_element(By.XPATH, "/html/body/div[1]/div/div[2]/div/div/div/div/h1/span").text
+        while no_survey_text == "":
+            no_survey_text = driver.find_element(By.XPATH, "/html/body/div[1]/div/div[2]/div/div/div/div/h1/span").text
         TestProduksi.no_survey = no_survey_text
         assert "SURVEY" in TestProduksi.no_survey
 
@@ -123,10 +127,12 @@ class TestProduksi:
         hitung_jadwal_btn = driver.find_element(By.XPATH, "/html/body/div[6]/div/div/div[2]/div/div/div/div[2]/table/tbody/tr/td[2]/button")
         hitung_jadwal_btn.click()
 
-        time.sleep(1)
+        time.sleep(2)
 
         close_btn = driver.find_element(By.XPATH, "/html/body/div[6]/div/div/div[3]/button")
         close_btn.click()
+
+        time.sleep(2)
         
         done_btn = driver.find_element(By.XPATH,  "/html/body/div[1]/div/div[2]/div/div/header/button[2]")
         done_btn.click()
@@ -156,6 +162,8 @@ class TestProduksi:
                                                            /table[1]/tbody/tr/td/div/ul/li[2]/a")
         list_material_btn.click()
 
+        time.sleep(2)
+
         hitung_material_btn = driver.find_element(By.XPATH, "/html/body/div[1]/div/div[2]/div/div/div/div/table[1]/tbody\
                                                              /tr/td/div/div/div[2]/table[1]/tbody/tr/td[1]/button")
         hitung_material_btn.click()
@@ -179,7 +187,7 @@ class TestProduksi:
         time.sleep(2)
 
     @pytest.mark.order3
-    def test_request_batch(self, driver):
+    def test_request_batch(self, driver : WebDriver):
         driver.get("https://rmcix.adhimix.web.id/web?#min=1&limit=80&view_type=list&model=schedule.truck.mixer&menu_id=3832")
         time.sleep(3)
 
@@ -226,12 +234,12 @@ class TestProduksi:
         
         ActionChains(driver)\
             .click(field_driver)\
-            .pause(1)\
+            .pause(0.7)\
             .send_keys(Keys.ENTER)\
             .perform()
         ActionChains(driver)\
             .click(field_batching_plant)\
-            .pause(1)\
+            .pause(0.7)\
             .send_keys(Keys.ENTER)\
             .perform()
         
@@ -244,6 +252,176 @@ class TestProduksi:
 
         time.sleep(3)
 
+    @pytest.mark.order4
+    def test_konfirmasi_produksi(self, driver : WebDriver):
+        driver.get("https://rmcix.adhimix.web.id/web?#min=1&limit=80&view_type=list&model=schedule.truck.mixer&menu_id=2123")
+        time.sleep(3)
+
+        driver.find_element(By.XPATH, "/html/body/div[1]/div/div[1]/div[1]/div/span").click()
+        filter_btn = driver.find_element(By.XPATH, "/html/body/div[1]/div/div[1]/div[3]/div[1]/div[1]")
+        filter_btn.click()
+
+        filter_docket_hari_ini = driver.find_element(By.XPATH, "/html/body/div[1]/div/div[1]/div[3]/div[1]/div[1]/ul/li[1]/a")
+        filter_docket_hari_ini.click()
+        filter_btn.click()
+
+        time.sleep(3)
+
+        list_docket = driver.find_elements(By.XPATH, "/html/body/div[1]/div/div[2]/div/div/div/table/tbody/tr")
+
+        for docket in list_docket:
+            col = docket.find_elements(By.TAG_NAME, "td")
+
+            nama_proyek_docket = col[7].text
+
+            # if nama_proyek_docket == self.nama_proyek:
+            if nama_proyek_docket == "PROYEK IKN3 (241488)":
+                konfirmasi_btn = col[-4].find_element(By.TAG_NAME, "button")
+                konfirmasi_btn.click()
+
+                try:
+                    alert = Alert(driver)
+                    alert.accept()  # or alert.dismiss() to click Cancel
+                except NoAlertPresentException:
+                    print("No alert present after clicking the confirmation button.")
+
+                time.sleep(3)
+                break
+
+    @pytest.mark.order5
+    def test_selesai_produksi(self, driver : WebDriver):
+        driver.get("https://rmcix.adhimix.web.id/web?#min=1&limit=80&view_type=list&model=schedule.truck.mixer&menu_id=2123")
+        time.sleep(3)
+
+        driver.find_element(By.XPATH, "/html/body/div[1]/div/div[1]/div[1]/div/span").click()
+        filter_btn = driver.find_element(By.XPATH, "/html/body/div[1]/div/div[1]/div[3]/div[1]/div[1]")
+        filter_btn.click()
+
+        filter_docket_hari_ini = driver.find_element(By.XPATH, "/html/body/div[1]/div/div[1]/div[3]/div[1]/div[1]/ul/li[1]/a")
+        filter_docket_hari_ini.click()
+        filter_btn.click()
+
+        time.sleep(3)
+
+        list_docket = driver.find_elements(By.XPATH, "/html/body/div[1]/div/div[2]/div/div/div/table/tbody/tr")
+
+        for docket in list_docket:
+            col = docket.find_elements(By.TAG_NAME, "td")
+
+            nama_proyek_docket = col[7].text
+
+            # if nama_proyek_docket == self.nama_proyek:
+            if nama_proyek_docket == "PROYEK IKN3 (241488)":
+                konfirmasi_btn = col[-3].find_element(By.TAG_NAME, "button")
+                konfirmasi_btn.click()
+
+                try:
+                    alert = Alert(driver)
+                    alert.accept()  # or alert.dismiss() to click Cancel
+                except NoAlertPresentException:
+                    print("No alert present after clicking the confirmation button.")
+
+                time.sleep(3)
+                break
         
+        field_truck_mixer = driver.find_element(
+            By.XPATH, "/html/body/div[6]/div/div/div[2]/div/div/div/table[2]/tbody/tr[3]/td[2]/div/div/input"
+        )
+        field_driver = driver.find_element(
+            By.XPATH, "/html/body/div[6]/div/div/div[2]/div/div/div/table[2]/tbody/tr[4]/td[2]/div/div/input"
+        )
+        confirm_btn = driver.find_element(
+            By.XPATH, "/html/body/div[6]/div/div/div[3]/div/footer/button[1]"
+        )
+        
+        ActionChains(driver)\
+            .click(field_truck_mixer)\
+            .pause(0.7)\
+            .send_keys(Keys.ENTER)\
+            .perform()
+        ActionChains(driver)\
+            .click(field_driver)\
+            .pause(0.7)\
+            .send_keys(Keys.ENTER)\
+            .perform()
+
+        confirm_btn.click()
+        ActionBuilder(driver).clear_actions()
+
+        time.sleep(3)
+        
+    @pytest.mark.order6
+    def test_cetak_docket(self, driver : WebDriver):
+        driver.get("https://rmcix.adhimix.web.id/web?#min=1&limit=80&view_type=list&model=schedule.truck.mixer&menu_id=2123")
+        time.sleep(3)
+
+        driver.find_element(By.XPATH, "/html/body/div[1]/div/div[1]/div[1]/div/span").click()
+        filter_btn = driver.find_element(By.XPATH, "/html/body/div[1]/div/div[1]/div[3]/div[1]/div[1]")
+        filter_btn.click()
+
+        filter_docket_hari_ini = driver.find_element(By.XPATH, "/html/body/div[1]/div/div[1]/div[3]/div[1]/div[1]/ul/li[1]/a")
+        filter_docket_hari_ini.click()
+        filter_btn.click()
+
+        time.sleep(3)
+
+        list_docket = driver.find_elements(By.XPATH, "/html/body/div[1]/div/div[2]/div/div/div/table/tbody/tr")
+
+        for docket in list_docket:
+            col = docket.find_elements(By.TAG_NAME, "td")
+
+            nama_proyek_docket = col[7].text
+
+            # if nama_proyek_docket == self.nama_proyek:
+            if nama_proyek_docket == "PROYEK IKN3 (241488)":
+                cetak_docket_btn = col[-2].find_element(By.TAG_NAME, "button")
+                cetak_docket_btn.click()
+
+                time.sleep(2)
+
+                cetak_docket_btn = driver.find_element(By.XPATH, "/html/body/div[7]/div/div/div[3]/div/footer/button[1]")
+                cetak_docket_btn.click()
+
+                time.sleep(3)
+                break
 
         
+    @pytest.mark.order7
+    def test_terima_docket(self, driver : WebDriver):
+        driver.get("https://rmcix.adhimix.web.id/web?#min=1&limit=80&view_type=list&model=schedule.truck.mixer&menu_id=2173")
+        time.sleep(3)
+
+        list_docket = driver.find_elements(By.XPATH, "/html/body/div[1]/div/div[2]/div/div/div/table/tbody/tr")
+
+        for docket in list_docket:
+            col = docket.find_elements(By.TAG_NAME, "td")
+
+            try:
+                terima_btn = col[-1].find_element(By.TAG_NAME, "button")
+                terima_btn.click()
+
+                break
+            except NoSuchElementException:
+                continue
+
+        time.sleep(5)
+
+        volume_kirim = driver.find_element(
+            By.XPATH, "/html/body/div[6]/div/div/div[2]/div/div/div/table/tbody/tr[5]/td[2]/span"
+        )
+        field_volume_terima = driver.find_element(
+            By.XPATH, "/html/body/div[6]/div/div/div[2]/div/div/div/table/tbody/tr[6]/td[2]/input"
+        )
+
+        field_volume_terima.clear()
+        field_volume_terima.send_keys(int(float(volume_kirim.text)))
+        assert field_volume_terima.get_attribute("value") == str(int(float(volume_kirim.text)))       
+
+        confirm_btn = driver.find_element(
+            By.XPATH, "/html/body/div[6]/div/div/div[3]/div/footer/button[1]"
+        )
+        confirm_btn.click()
+        
+        time.sleep(3)
+
+    
