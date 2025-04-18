@@ -16,7 +16,7 @@ def chrome_driver():
     options.add_argument("--mute-audio")
 
     driver = webdriver.Chrome(service=service, options=options)
-    driver.implicitly_wait(5)
+    driver.implicitly_wait(3)
     yield driver  # Provide driver instance to tests
 
     driver.quit()  # Close browser after tests
