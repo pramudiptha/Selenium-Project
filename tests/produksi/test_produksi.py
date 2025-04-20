@@ -174,11 +174,11 @@ class TestProduksi:
 
         confirm_btn = driver.find_element(By.XPATH, "/html/body/div[1]/div/div[2]/div/div/header/button[1]")
         confirm_btn.click()
-        time.sleep(2)
+        time.sleep(20)
 
         approve_btn = driver.find_element(By.XPATH, "/html/body/div[1]/div/div[2]/div/div/header/button[2]")
         approve_btn.click()
-        time.sleep(5)
+        time.sleep(20)
 
         generate_docket_btn = driver.find_element(By.XPATH, "/html/body/div[1]/div/div[2]/div/div/header/button[4]")
         generate_docket_btn.click()
@@ -186,12 +186,12 @@ class TestProduksi:
 
         ok_btn = driver.find_element(By.XPATH, "/html/body/div[8]/div/div/div[3]/button[1]")
         ok_btn.click()
-        time.sleep(5)
+        time.sleep(10)
 
     @pytest.mark.order3
     def test_request_batch(self, driver : WebDriver):
         driver.get("https://rmcix.adhimix.web.id/web?#min=1&limit=80&view_type=list&model=schedule.truck.mixer&menu_id=3832")
-        time.sleep(3)
+        time.sleep(5)
 
         driver.find_element(By.XPATH, "/html/body/div[1]/div/div[1]/div[1]/div/span").click()
         filter_btn = driver.find_element(By.XPATH, "/html/body/div[1]/div/div[1]/div[3]/div[1]/div[1]")
@@ -299,14 +299,14 @@ class TestProduksi:
         time.sleep(3)
 
         # driver.find_element(By.XPATH, "/html/body/div[1]/div/div[1]/div[1]/div/span").click()
-        filter_btn = driver.find_element(By.XPATH, "/html/body/div[1]/div/div[1]/div[3]/div[1]/div[1]")
-        filter_btn.click()
+        # filter_btn = driver.find_element(By.XPATH, "/html/body/div[1]/div/div[1]/div[3]/div[1]/div[1]")
+        # filter_btn.click()
 
-        filter_docket_hari_ini = driver.find_element(By.XPATH, "/html/body/div[1]/div/div[1]/div[3]/div[1]/div[1]/ul/li[1]/a")
-        filter_docket_hari_ini.click()
-        filter_btn.click()
+        # filter_docket_hari_ini = driver.find_element(By.XPATH, "/html/body/div[1]/div/div[1]/div[3]/div[1]/div[1]/ul/li[1]/a")
+        # filter_docket_hari_ini.click()
+        # filter_btn.click()
 
-        time.sleep(3)
+        # time.sleep(3)
 
         list_docket = driver.find_elements(By.XPATH, "/html/body/div[1]/div/div[2]/div/div/div/table/tbody/tr")
 
@@ -364,14 +364,14 @@ class TestProduksi:
         time.sleep(3)
 
         # driver.find_element(By.XPATH, "/html/body/div[1]/div/div[1]/div[1]/div/span").click()
-        filter_btn = driver.find_element(By.XPATH, "/html/body/div[1]/div/div[1]/div[3]/div[1]/div[1]")
-        filter_btn.click()
+        # filter_btn = driver.find_element(By.XPATH, "/html/body/div[1]/div/div[1]/div[3]/div[1]/div[1]")
+        # filter_btn.click()
 
-        filter_docket_hari_ini = driver.find_element(By.XPATH, "/html/body/div[1]/div/div[1]/div[3]/div[1]/div[1]/ul/li[1]/a")
-        filter_docket_hari_ini.click()
-        filter_btn.click()
+        # filter_docket_hari_ini = driver.find_element(By.XPATH, "/html/body/div[1]/div/div[1]/div[3]/div[1]/div[1]/ul/li[1]/a")
+        # filter_docket_hari_ini.click()
+        # filter_btn.click()
 
-        time.sleep(3)
+        # time.sleep(3)
 
         list_docket = driver.find_elements(By.XPATH, "/html/body/div[1]/div/div[2]/div/div/div/table/tbody/tr")
 
